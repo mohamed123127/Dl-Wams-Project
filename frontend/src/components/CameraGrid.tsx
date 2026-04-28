@@ -100,7 +100,7 @@ export const CameraGrid = ({ view }: { view: CameraView }) => {
   const [cameras, setCameras] = useState<Camera[]>([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/cameras/')
+    fetch('http://127.0.0.1:8004/api/cameras/')
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {

@@ -26,13 +26,12 @@ export const IncidentDetailsSidebar = ({ items = [], selectedItemId, onSelectIte
               <div
                 key={item.id}
                 onClick={() => onSelectItem?.(item.id)}
-                className={`p-3 rounded-sm border cursor-pointer transition-all duration-200 ${
-                  isSelected
-                    ? 'bg-blue-500/10 border-blue-500/50 ring-1 ring-blue-500/30'
-                    : !item.viewed
-                      ? 'bg-slate-800/80 border-orange-500/50 hover:bg-slate-800/60'
-                      : 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/40'
-                }`}
+                className={`p-3 rounded-sm border cursor-pointer transition-all duration-200 ${isSelected
+                  ? 'bg-blue-500/10 border-blue-500/50 ring-1 ring-blue-500/30'
+                  : !item.viewed
+                    ? 'bg-slate-800/80 border-orange-500/50 hover:bg-slate-800/60'
+                    : 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-800/40'
+                  }`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <div className="flex items-center space-x-2">

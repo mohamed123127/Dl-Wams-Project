@@ -6,4 +6,4 @@ from .permissions import IsAdmin
 class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
-    permission_classes = [IsAdmin]
+    # permission_classes = [IsAdmin]

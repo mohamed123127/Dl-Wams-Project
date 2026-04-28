@@ -2,7 +2,7 @@ import requests
 import os
 
 def sendShopliftingWarning(video_path, location="Clothes area", camera="Camera 1"):
-    url = "http://127.0.0.1:8003/api/shoplifting/"
+    url = "http://127.0.0.1:8004/api/shoplifting/"
     
     if not os.path.exists(video_path):
         print(f"❌ Video file not found for warning: {video_path}")

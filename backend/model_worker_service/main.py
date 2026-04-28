@@ -50,14 +50,15 @@ def stream_worker():
                 break
 
             # write the result on the frame
-            if latest_prediction:
-                text = f"{latest_prediction['label']} ({latest_prediction['score']:.2f}%)"
-                color = (0, 0, 255) if latest_prediction['score'] > 50 else (0, 255, 0)
+            # if latest_prediction:
+            #     print('test',latest_prediction)
+            #     text = f"{latest_prediction['label']} ({latest_prediction['score']:.2f}%)"
+            #     color = (0, 0, 255) if latest_prediction['score'] > 50 else (0, 255, 0)
 
-                cv2.putText(frame, text, (20, 40),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+            #     cv2.putText(frame, text, (20, 40),
+            #                 cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
 
-            cv2.imshow("LIVE STREAM", frame)
+            # cv2.imshow("LIVE STREAM", frame)
 
             buffer.append(frame)
 
@@ -89,19 +90,19 @@ def model_worker():
         try:
             video_path = clip_queue.get(timeout=1)
 
-            print(f"🧠 Running model on: {video_path}")
+            print(f"Running model on: {video_path}")
 
-            results, scores = predict_video(video_path)
+            results = predict_video(video_path)
+            # print("🔥 FINAL RESULT23:", results)
 
-            if scores:
-                best_score, start, end = max(scores, key=lambda x: x[0])
+            if results:
 
                 latest_prediction = {
-                    "label": "SHOPLIFTING" if best_score > 50 else "NORMAL",
-                    "score": best_score,
+                    "label": "SHOPLIFTING" if results["isShopLifting"] > 50 else "NORMAL",
+                    "score": results["confidence"],
                     "video": video_path
                 }
-                print("🔥 FINAL RESULT:", latest_prediction)
+                # print("🔥 FINAL RESULT23:", latest_prediction)
 
                 # prediction_queue.put(latest_prediction)
 
@@ -130,3 +131,5 @@ def run():
 
     print("✅ Shutdown complete")
 
+if __name__ == '__main__':
+    run()

@@ -1,3 +1,4 @@
+from PIL.Image import item
 from rest_framework import serializers
 import requests
 from .models import Sale, ItemSaled
@@ -41,6 +42,9 @@ class SaleSerializer(serializers.ModelSerializer):
             product_id = item.get('product_id')
             quantity = int(item.get('quantity', 0))
 
+            if not product_id:
+                raise serializers.ValidationError({"items_data": f"Product ID for item is required."})
+
             if quantity <= 0:
                 raise serializers.ValidationError({"items_data": f"Quantity for product {product_id} must be greater than 0."})
 
@@ -50,6 +54,12 @@ class SaleSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({"items_data": f"Product with ID {product_id} does not exist."})
                 
                 product_data = prod_response.json()
+                price = float(item.get('price', 0))
+                if price <= 0:
+                    item['price'] = float(product_data.get('selling_price', 0))
+                else:
+                    item['price'] = price
+
                 if product_data.get('stock', 0) < quantity:
                     raise serializers.ValidationError({"items_data": f"Insufficient stock for product {product_id}."})
             except requests.exceptions.RequestException:

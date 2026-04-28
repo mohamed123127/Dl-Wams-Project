@@ -1,6 +1,6 @@
 import requests
 
-AUTH_SERVICE_URL = "http://127.0.0.1:8000/api/auth/verify-role/"
+AUTH_SERVICE_URL = "http://127.0.0.1:8005/api/verify-role/"
 
 
 def verifyToken(token):
@@ -13,6 +13,8 @@ def verifyToken(token):
             timeout=5
         )
 
+        print(token)
+        print(response.json())
         if response.status_code == 200:
             return response.json()
 

@@ -7,7 +7,7 @@ class RolePermission(BasePermission):
 
     def has_permission(self, request, view):
         token = request.headers.get("Authorization")
-
+        # print(token)
         if not token:
             return False
 
@@ -17,7 +17,7 @@ class RolePermission(BasePermission):
             return False
 
         request.remote_user = user_data
-
+        print(user_data.get("role"))
         return user_data.get("role") in self.allowed_roles
 
 

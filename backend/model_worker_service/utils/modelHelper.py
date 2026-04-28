@@ -3,15 +3,13 @@ import torch
 import torch.nn as nn
 import numpy as np
 import os
-from videoHelper import extract_clip
+from utils.videoHelper import extract_clip
 from services.shoplifting_service import sendShopliftingWarning
+from pathlib import Path
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-usedModel = "../resources/models/train3_2.pth"
-
-model = SimpleI3D().to(device)
-model.load_state_dict(torch.load(usedModel, map_location=device))
-model.eval()
+BASE_DIR = Path(__file__).resolve().parent  # file directory
+model_path = BASE_DIR / "../resources/models/train3_2.pth"
 
 class SimpleI3D(nn.Module):
     def __init__(self):
@@ -48,7 +46,13 @@ class SimpleI3D(nn.Module):
         return self.fc(x)
 
 
-def predict_video(video_path, chunk_seconds=2, threshold=70):
+model = SimpleI3D().to(device)
+model.load_state_dict(torch.load(model_path, map_location=device))
+model.eval()
+
+
+
+def predict_video(video_path, chunk_seconds=2, threshold=70,isTestVedio=False):
     cap = cv2.VideoCapture(video_path)
     fps = cap.get(cv2.CAP_PROP_FPS)
 
@@ -97,9 +101,18 @@ def predict_video(video_path, chunk_seconds=2, threshold=70):
         shoplifting_scores.append((shoplifting_prob, start_sec, end_sec))
 
         # save the shoplifting in security service
-        if shoplifting_prob >= threshold and not alert_sent:
+        if shoplifting_prob >= threshold and not alert_sent and not isTestVedio:
             print("🚨 Shoplifting detected! Sending warning...")
             sendShopliftingWarning(video_path)
             alert_sent = True  
 
-    return results, shoplifting_scores
+        if shoplifting_scores:
+            max_score, max_start, max_end = max(shoplifting_scores, key=lambda x: x[0])
+        else:
+            max_score, max_start, max_end = 0, None, None
+
+        finalResults = { 
+            "isShoplifting": max_score >= threshold,
+            "confidence": round(max_score, 2)
+        }
+    return finalResults
