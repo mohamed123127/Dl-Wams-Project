@@ -8,7 +8,8 @@ interface IncidentLogsPageProps {
   onMarkViewed: (itemId: number) => void;
 }
 
-export const IncidentLogsPage = ({ items, selectedItemId, onMarkViewed }: IncidentLogsPageProps) => {
+export const IncidentLogsPage = ({ testVedio, setTestVedio, items, selectedItemId, onMarkViewed }: IncidentLogsPageProps) => {
+  const [testVedioResult, setTestVedioResult] = useState({});
   // Show the selected item, or fall back to the first item
   const currentItem = selectedItemId
     ? items.find(item => item.id === selectedItemId) || items[0]
@@ -16,6 +17,8 @@ export const IncidentLogsPage = ({ items, selectedItemId, onMarkViewed }: Incide
 
   const handleVideoPlay = () => {
     if (currentItem && !currentItem.viewed) {
+      console.log('playing');
+      setTestVedio('');
       onMarkViewed(currentItem.id);
     }
   };
@@ -23,9 +26,56 @@ export const IncidentLogsPage = ({ items, selectedItemId, onMarkViewed }: Incide
   // Auto-mark as viewed when the item is displayed
   useEffect(() => {
     if (currentItem && !currentItem.viewed) {
+      setTestVedio('');
       onMarkViewed(currentItem.id);
     }
   }, [currentItem?.id]);
+
+  const handleImport = async () => {
+    try {
+      // Create hidden file input
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".mp4";
+
+      input.onchange = async (event) => {
+        const video = event.target.files[0];
+
+        if (!video) return;
+
+        setTestVedio(URL.createObjectURL(video))
+
+        const formData = new FormData();
+        formData.append("video", video);
+
+        try {
+          const response = await fetch("http://localhost:8003/api/predict/", {
+            method: "POST",
+            body: formData,
+            // If using auth:
+            // headers: {
+            //   Authorization: `Bearer ${token}`,
+            // },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to import file");
+          }
+
+          const result = await response.json();
+
+          setTestVedioResult(result);
+        } catch (error) {
+          console.error("Import error:", error);
+          alert("Import failed!");
+        }
+      };
+
+      input.click();
+    } catch (error) {
+      console.error("File selection error:", error);
+    }
+  };
 
   return (
     <main className="flex-1 flex flex-col p-6 overflow-y-auto space-y-6 min-h-0 bg-[#0b101a]">
@@ -51,9 +101,9 @@ export const IncidentLogsPage = ({ items, selectedItemId, onMarkViewed }: Incide
         </div>
 
         <div className="flex space-x-3">
-          <button className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-sm transition-colors text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+          <button onClick={handleImport} className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-sm transition-colors text-xs font-bold tracking-widest uppercase shadow-[0_0_15px_rgba(59,130,246,0.3)]">
             <Download className="w-4 h-4" />
-            <span>Export Clip</span>
+            <span>Import Clip</span>
           </button>
         </div>
       </header>
@@ -63,7 +113,7 @@ export const IncidentLogsPage = ({ items, selectedItemId, onMarkViewed }: Incide
         <div className="h-64 relative bg-black border border-slate-800 rounded-sm flex-1 flex flex-col group">
           <video
             key={currentItem?.id}
-            src={currentItem?.video_path}
+            src={testVedio !== '' ? testVedio : currentItem?.video_path}
             autoPlay
             loop
             muted
@@ -74,7 +124,7 @@ export const IncidentLogsPage = ({ items, selectedItemId, onMarkViewed }: Incide
           />
           <div className="absolute top-4 left-4 flex space-x-2 pointer-events-none w-[500px]">
             <div>
-              {items.length === 0 && (
+              {testVedio == '' && items.length === 0 && (
                 <div className="absolute top-4 left-4 flex space-x-2 pointer-events-none w-fit">
                   <div className="bg-orange-500/90 text-white text-[10px] font-bold px-2 py-1 flex items-center space-x-1 rounded-sm uppercase tracking-wider shadow-[0_0_10px_rgba(249,115,22,0.5)]">
                     <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
@@ -83,11 +133,21 @@ export const IncidentLogsPage = ({ items, selectedItemId, onMarkViewed }: Incide
                 </div>
               )}
               {
-                items.length > 0 && (
+                testVedio == '' && items.length > 0 && (
                   <div className="absolute top-4 left-4 flex space-x-2 pointer-events-none">
                     <div className="bg-orange-500/90 text-white text-[10px] font-bold px-2 py-1 flex items-center space-x-1 rounded-sm uppercase tracking-wider shadow-[0_0_10px_rgba(249,115,22,0.5)]">
                       <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
                       <span>Shoplifting detected</span>
+                    </div>
+                  </div>
+                )
+              }
+              {
+                testVedio != '' && (
+                  <div className="absolute top-4 left-4 flex space-x-2 pointer-events-none">
+                    <div className="bg-orange-500/90 text-white text-[10px] font-bold px-2 py-1 flex items-center space-x-1 rounded-sm uppercase tracking-wider shadow-[0_0_10px_rgba(249,115,22,0.5)]">
+                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                      <span>{testVedioResult.isShoplifting ? 'Shoplifting {' + testVedioResult.confidence + '}' : 'No shoplifting'}</span>
                     </div>
                   </div>
                 )

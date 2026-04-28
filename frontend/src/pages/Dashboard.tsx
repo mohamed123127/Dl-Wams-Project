@@ -6,23 +6,25 @@ import { CameraGridPage } from './CameraGridPage';
 import { AnalyticsPage } from './AnalyticsPage';
 import { SettingsPage } from './SettingsPage';
 import { StaffManagementPage } from './StaffManagementPage';
-import { InventoryLogPage} from './InventoryLogPage'
-import { POSTerminalPage} from './POSTerminalPage'
+import { InventoryLogPage } from './InventoryLogPage'
+import { POSTerminalPage } from './POSTerminalPage'
 
 
 export type TabName = 'Camera Grid' | 'Incident Logs' | 'Analytics' | 'Staff Management' | 'Settings';
 export type CameraView = '2x2' | '3x3';
 
 export const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState<TabName>('Staff Management');
+  const [activeTab, setActiveTab] = useState<TabName>('Incident Logs');
   const [hasIncidentNotification, setHasIncidentNotification] = useState(false);
   const [shopliftingItems, setShopliftingItems] = useState<any[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+  const [testVedio, setTestVedio] = useState('');
+
 
   // Fetch data in Dashboard so it persists across all tabs
   const fetchData = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/shoplifting/");
+      const res = await fetch("http://127.0.0.1:8004/api/shoplifting/");
       const data = await res.json();
       // API returns a plain array, not paginated
       const items = Array.isArray(data) ? data : data.results || [];
@@ -47,7 +49,7 @@ export const Dashboard = () => {
   // Mark an item as viewed in DB and update local state immediately
   const markAsViewed = async (itemId: number) => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/shoplifting/${itemId}/`, {
+      await fetch(`http://127.0.0.1:8004/api/shoplifting/${itemId}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ viewed: true })
@@ -67,6 +69,7 @@ export const Dashboard = () => {
 
   // When clicking an item in the notification sidebar
   const handleSelectItem = (itemId: number) => {
+    setTestVedio('');
     setSelectedItemId(itemId);
     setActiveTab('Incident Logs');
   };
@@ -86,8 +89,11 @@ export const Dashboard = () => {
       case 'Incident Logs':
         return (
           <IncidentLogsPage
+            testVedio={testVedio}
+            setTestVedio={setTestVedio}
             items={shopliftingItems}
             selectedItemId={selectedItemId}
+            setSelectedItemId={setSelectedItemId}
             onMarkViewed={markAsViewed}
           />
         );
@@ -95,7 +101,7 @@ export const Dashboard = () => {
         return <CameraGridPage />;
       case 'Analytics':
         return <AnalyticsPage />;
-        case 'Inventory Log':
+      case 'Inventory Log':
         return <InventoryLogPage />;
       case 'POS Terminal':
         return <POSTerminalPage />;
@@ -121,16 +127,16 @@ export const Dashboard = () => {
       />
 
       {renderPage()}
-{activeTab === 'Incident Logs' && (
-      <aside className={`border-l border-slate-800 bg-[#0f1522] flex flex-col shrink-0 ${activeTab === 'Incident Logs' ? 'w-[350px]' : 'w-80'}`}>
-        
+      {activeTab === 'Incident Logs' && (
+        <aside className={`border-l border-slate-800 bg-[#0f1522] flex flex-col shrink-0 ${activeTab === 'Incident Logs' ? 'w-[350px]' : 'w-80'}`}>
+
           <IncidentDetailsSidebar
             items={shopliftingItems}
             selectedItemId={selectedItemId}
             onSelectItem={handleSelectItem}
           />
-      </aside>
-        )}
+        </aside>
+      )}
     </div>
   );
 };
