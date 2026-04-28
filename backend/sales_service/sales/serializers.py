@@ -77,8 +77,9 @@ class SaleSerializer(serializers.ModelSerializer):
         sale = Sale.objects.create(**validated_data)
         
         for item_data in items_data:
-            product_id = item_data['product_id']
+            product_id = int(item_data['product_id'])
             quantity = int(item_data['quantity'])
+            price = float(item_data['price'])
             
             # Deduct stock
             try:
@@ -89,7 +90,13 @@ class SaleSerializer(serializers.ModelSerializer):
                 )
             except requests.exceptions.RequestException:
                 pass
-                
-            ItemSaled.objects.create(sale=sale, **item_data)
+
+            # Only pass the exact model fields
+            ItemSaled.objects.create(
+                sale=sale,
+                product_id=product_id,
+                quantity=quantity,
+                price=price,
+            )
             
         return sale
