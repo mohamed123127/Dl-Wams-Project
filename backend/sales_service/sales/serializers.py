@@ -67,29 +67,4 @@ class SaleSerializer(serializers.ModelSerializer):
 
         return data
 
-    def create(self, validated_data):
-        items_data = validated_data.pop('items_data', [])
-        
-        # Calculate total amount
-        total_amount = sum(float(item['price']) * int(item['quantity']) for item in items_data)
-        validated_data['total_amount'] = total_amount
-        
-        sale = Sale.objects.create(**validated_data)
-        
-        for item_data in items_data:
-            product_id = item_data['product_id']
-            quantity = int(item_data['quantity'])
-            
-            # Deduct stock
-            try:
-                requests.post(
-                    f"{PRODUCT_SERVICE_URL}/{product_id}/deduct_stock/", 
-                    json={"quantity": quantity}, 
-                    timeout=2
-                )
-            except requests.exceptions.RequestException:
-                pass
-                
-            ItemSaled.objects.create(sale=sale, **item_data)
-            
-        return sale
+    

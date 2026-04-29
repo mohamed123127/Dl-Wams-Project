@@ -13,7 +13,7 @@ product_service:in new terminal
     python manage.py runserver 8000
 
 employee_service:
-    cd employee_service
+    cd backend/employee_service
     python manage.py migrate
     python manage.py runserver 8001
 

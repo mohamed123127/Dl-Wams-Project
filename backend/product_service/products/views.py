@@ -1,12 +1,14 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action,permission_classes
 from .models import Product
 from .serializers import ProductSerializer
+from product_service.permissions import IsInventoryManager,IsSeller
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsInventoryManager]
 
     def create(self, request, *args, **kwargs):
         # Business Logic: Ensure selling price > purchase price
@@ -20,7 +22,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
         return super().create(request, *args, **kwargs)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'],permission_classes=[IsInventoryManager | IsSeller])
     def deduct_stock(self, request, pk=None):
         product = self.get_object()
         quantity_to_deduct = int(request.data.get('quantity', 0))

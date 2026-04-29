@@ -4,3 +4,5 @@ backend/**/db.sqlite3
 backend/**/venv
 backend/**/clips/*
 backend/security_service/media/*
+backend/model_worker_service/resources/*
+backend/model_worker_service/tests/*

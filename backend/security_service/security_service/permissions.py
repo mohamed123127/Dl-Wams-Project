@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from employee_service.auth import verifyToken
+from .auth import verifyToken
 
 
 class RolePermission(BasePermission):
@@ -23,13 +23,17 @@ class IsAdmin(RolePermission):
     allowed_roles = ['admin']
 
 
-class IsManagerRemote(RolePermission):
+class IsManager(RolePermission):
     allowed_roles = ['admin', 'manager']
 
 
-class IsSellerRemote(RolePermission):
-    allowed_roles = ['admin', 'seller']
+class IsSeller(RolePermission):
+    allowed_roles = ['admin', 'seller', 'manager']
 
 
-class IsInventoryManagerRemote(RolePermission):
-    allowed_roles = ['admin', 'inventoryManager']
+class IsGuard(RolePermission):
+    allowed_roles = ['admin', 'guard']
+
+
+class IsInventoryManager(RolePermission):
+    allowed_roles = ['admin', 'inventoryManager', 'manager']

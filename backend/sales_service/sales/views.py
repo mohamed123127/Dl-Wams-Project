@@ -1,3 +1,4 @@
+from sales_service.permissions import IsSeller
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 import requests
@@ -28,6 +29,7 @@ def get_product_data(product_id):
 class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
+    permission_classes = [IsSeller]
 
     def get_full_sale_data(self, instance):
         serializer = self.get_serializer(instance)
@@ -80,3 +82,32 @@ class SaleViewSet(viewsets.ModelViewSet):
 class ItemSaledViewSet(viewsets.ModelViewSet):
     queryset = ItemSaled.objects.all()
     serializer_class = ItemSaledSerializer
+    permission_classes = [IsSeller]
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('items_data', [])
+        
+        # Calculate total amount
+        total_amount = sum(float(item['price']) * int(item['quantity']) for item in items_data)
+        validated_data['total_amount'] = total_amount
+        
+        sale = Sale.objects.create(**validated_data)
+        
+        for item_data in items_data:
+            product_id = item_data['product_id']
+            quantity = int(item_data['quantity'])
+            
+            # Deduct stock
+            try:
+                requests.post(
+                    f"{PRODUCT_SERVICE_URL}/{product_id}/deduct_stock/", 
+                    json={"quantity": quantity}, 
+                    timeout=2
+                )
+            except requests.exceptions.RequestException:
+                pass
+                
+            ItemSaled.objects.create(sale=sale, **item_data)
+            
+        return sale
+
