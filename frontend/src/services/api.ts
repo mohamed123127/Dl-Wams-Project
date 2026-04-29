@@ -47,11 +47,12 @@ const ENDPOINTS = {
 //  Generic helpers
 // =============================================================
 
-function getHeaders(): Record<string, string> {
+export function getHeaders(): Record<string, string> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   const token = localStorage.getItem('access_token');
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+    headers['ngrok-skip-browser-warning'] = 'true';
   }
   return headers;
 }
@@ -157,8 +158,8 @@ export const settingsApi = {
 //  Auth API
 // =============================================================
 export const authApi = {
-  login: (data: Record<string, unknown>) => post<{access: string, refresh: string}>(ENDPOINTS.authLogin, data),
-  refresh: (refresh: string) => post<{access: string}>(ENDPOINTS.authRefresh, { refresh }),
-  verifyRole: () => get<{username: string, role: string}>(ENDPOINTS.authVerifyRole),
+  login: (data: Record<string, unknown>) => post<{ access: string, refresh: string }>(ENDPOINTS.authLogin, data),
+  refresh: (refresh: string) => post<{ access: string }>(ENDPOINTS.authRefresh, { refresh }),
+  verifyRole: () => get<{ username: string, role: string }>(ENDPOINTS.authVerifyRole),
 };
 

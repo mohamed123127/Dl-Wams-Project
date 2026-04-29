@@ -10,8 +10,7 @@ backend:in new terminal
 product_service:in new terminal
     cd backend/product_service
     python manage.py migrate
-    python manage.py runserver 8000
-
+    python manage.py runserver
 employee_service:
     cd backend/employee_service
     python manage.py migrate

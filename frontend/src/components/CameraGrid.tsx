@@ -1,6 +1,8 @@
 import { CameraOff } from 'lucide-react';
 import type { CameraView } from '../frontend/Dashboard';
 import { useRef, useEffect, useState } from 'react';
+import { getHeaders } from '../services/api';
+
 
 // Using a free sample video to simulate "real feed when cameras are installed"
 // But built functionally so these can be replaced by RTSP/WebRTC streams easily.
@@ -100,7 +102,12 @@ export const CameraGrid = ({ view }: { view: CameraView }) => {
   const [cameras, setCameras] = useState<Camera[]>([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8004/api/cameras/')
+    fetch('https://28aa-105-99-229-78.ngrok-free.app/api/cameras/'
+      , {
+        method: 'GET',
+        headers: getHeaders(),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
