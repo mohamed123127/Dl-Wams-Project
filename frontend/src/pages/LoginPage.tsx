@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Fingerprint, Eye, EyeOff, Wifi } from "lucide-react";
+import { authApi } from "../services/api";
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -78,25 +79,23 @@ export const LoginPage = ({ onLogin }: LoginPageProps) => {
       return;
     }
 
-    // setIsAuthenticating(true);
-    // setStatusLines((prev) => [...prev, "> AUTHENTICATING_OPERATOR..."]);
+    setIsAuthenticating(true);
+    try {
+      const response = await authApi.login({
+        username: operatorId,
+        password: encryptedKey,
+      });
 
-    // await new Promise((resolve) => setTimeout(resolve, 1500));
+      localStorage.setItem("access_token", response.access);
+      localStorage.setItem("refresh_token", response.refresh);
 
-    // setStatusLines((prev) => [...prev, "> CREDENTIALS_VERIFIED"]);
-
-    // await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // setStatusLines((prev) => [
-    //   ...prev,
-    //   "> ACCESS_GRANTED // WELCOME_OPERATOR",
-    // ]);
-
-    // await new Promise((resolve) => setTimeout(resolve, 600));
-
-    // setIsAuthenticating(false);
-    // onLogin(operatorId, encryptedKey);
-    onLogin();
+      onLogin();
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setError("AUTHENTICATION_FAILED");
+    } finally {
+      setIsAuthenticating(false);
+    }
   };
 
   return (
