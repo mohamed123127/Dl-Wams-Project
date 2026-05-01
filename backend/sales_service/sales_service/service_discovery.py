@@ -1,11 +1,17 @@
 import consul
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
-def discover_service(service_name):
-    c = consul.Consul(host="localhost", port=8500)
+consulHost = os.environ.get("CONSUL_HOST")
 
+def discover_service(service_name):
+    c = consul.Consul(
+        host=consulHost,
+        port=443,
+        scheme="https"
+    )
     services = c.health.service(service_name, passing=True)[1] #passing=True means healthy services only
 
     if not services:
