@@ -29,38 +29,39 @@ export async function fetchEndpoints() {
 }
 
 
-export let AUTH_API_URL = "http://localhost:8005";
-export let INVENTORY_API_URL = "http://localhost:8000";
-export let SALES_API_URL = "http://localhost:8002";
-export let STAFF_API_URL = "http://localhost:8001";
-export let MODEL_API_URL = "http://localhost:8003";
-export let SECURITY_API_URL = "http://localhost:8004";
+export let AUTH_API_URL = "";
+export let INVENTORY_API_URL = "";
+export let SALES_API_URL = "";
+export let STAFF_API_URL = "";
+export let MODEL_API_URL = "";
+export let SECURITY_API_URL = "";
 
-const ENDPOINTS_URLS = {
-  // Auth (auth_service — port 8005)
-  authLogin: `${AUTH_API_URL}/api/login/`,
-  authRefresh: `${AUTH_API_URL}/api/login/refresh/`,
-  authVerifyRole: `${AUTH_API_URL}/api/verify-role/`,
+function ENDPOINTS_URLS() {
+  return {
+    // Auth (auth_service — port 8005)
+    authLogin: `${AUTH_API_URL}/api/login/`,
+    authRefresh: `${AUTH_API_URL}/api/login/refresh/`,
+    authVerifyRole: `${AUTH_API_URL}/api/verify-role/`,
 
-  // Inventory / Products  (product_service — port 8000)
-  inventory: `${INVENTORY_API_URL}/api/products/`,
-  inventoryItem: (id: string) => `${INVENTORY_API_URL}/api/products/${id}/`,
+    // Inventory / Products  (product_service — port 8000)
+    inventory: `${INVENTORY_API_URL}/api/products/`,
+    inventoryItem: (id: string) => `${INVENTORY_API_URL}/api/products/${id}/`,
 
-  // Staff
-  staff: `${STAFF_API_URL}/api/employees/`,
-  staffMember: (id: string) => `${STAFF_API_URL}/api/employees/${id}/`,
+    // Staff
+    staff: `${STAFF_API_URL}/api/employees/`,
+    staffMember: (id: string) => `${STAFF_API_URL}/api/employees/${id}/`,
 
-  // Sales (port 8002)
-  sales: `${SALES_API_URL}/api/sales/`,
-  saleById: (id: string | number) => `${SALES_API_URL}/api/sales/${id}/`,
+    // Sales (port 8002)
+    sales: `${SALES_API_URL}/api/sales/`,
+    saleById: (id: string | number) => `${SALES_API_URL}/api/sales/${id}/`,
 
-  // POS Terminal
-  posCart: `${SALES_API_URL}/api/pos/cart/`,
-  posCartItem: (id: string) => `${SALES_API_URL}/api/pos/cart/${id}/`,
-  posPayment: `${SALES_API_URL}/api/pos/payment/`,
-  posSkuLookup: (sku: string) => `${SALES_API_URL}/api/pos/lookup/${sku}/`,
-
-};
+    // POS Terminal
+    posCart: `${SALES_API_URL}/api/pos/cart/`,
+    posCartItem: (id: string) => `${SALES_API_URL}/api/pos/cart/${id}/`,
+    posPayment: `${SALES_API_URL}/api/pos/payment/`,
+    posSkuLookup: (sku: string) => `${SALES_API_URL}/api/pos/lookup/${sku}/`,
+  };
+}
 
 // =============================================================
 //  Generic helpers
@@ -77,7 +78,7 @@ export function getHeaders(): Record<string, string> {
 }
 
 async function get<T>(url: string): Promise<T> {
-  const res = await fetch(url, { headers: getHeaders() });
+  const res = await fetch("https://" + url, { headers: getHeaders() });
   if (!res.ok) throw new Error(`GET ${url} failed: ${res.status}`);
   const data = await res.json();
   return Array.isArray(data) ? data : data.results ?? data;
@@ -85,7 +86,7 @@ async function get<T>(url: string): Promise<T> {
 
 async function post<T>(url: string, body: Record<string, unknown>): Promise<T> {
   console.log(url);
-  const res = await fetch(url, {
+  const res = await fetch("https://" + url, {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify(body),
@@ -108,28 +109,28 @@ async function patch<T>(url: string, body: Record<string, unknown>): Promise<T> 
 //  Inventory API
 // =============================================================
 export const inventoryApi = {
-  getAll: () => get<any[]>(ENDPOINTS_URLS.inventory),
-  create: (item: Record<string, unknown>) => post<any>(ENDPOINTS_URLS.inventory, item),
-  update: (id: string, data: Record<string, unknown>) => patch<any>(ENDPOINTS_URLS.inventoryItem(id), data),
+  getAll: () => get<any[]>(ENDPOINTS_URLS().inventory),
+  create: (item: Record<string, unknown>) => post<any>(ENDPOINTS_URLS().inventory, item),
+  update: (id: string, data: Record<string, unknown>) => patch<any>(ENDPOINTS_URLS().inventoryItem(id), data),
 };
 
 // =============================================================
 //  Staff API
 // =============================================================
 export const staffApi = {
-  getAll: () => get<any[]>(ENDPOINTS_URLS.staff),
-  create: (member: Record<string, unknown>) => post<any>(ENDPOINTS_URLS.staff, member),
-  update: (id: string, data: Record<string, unknown>) => patch<any>(ENDPOINTS_URLS.staffMember(id), data),
+  getAll: () => get<any[]>(ENDPOINTS_URLS().staff),
+  create: (member: Record<string, unknown>) => post<any>(ENDPOINTS_URLS().staff, member),
+  update: (id: string, data: Record<string, unknown>) => patch<any>(ENDPOINTS_URLS().staffMember(id), data),
 };
 
 // =============================================================
 //  POS Terminal API
 // =============================================================
 export const posApi = {
-  getCart: () => get<any[]>(ENDPOINTS_URLS.posCart),
-  addToCart: (item: Record<string, unknown>) => post<any>(ENDPOINTS_URLS.posCart, item),
-  lookupSku: (sku: string) => get<any>(ENDPOINTS_URLS.posSkuLookup(sku)),
-  processPayment: (data: Record<string, unknown>) => post<any>(ENDPOINTS_URLS.posPayment, data),
+  getCart: () => get<any[]>(ENDPOINTS_URLS().posCart),
+  addToCart: (item: Record<string, unknown>) => post<any>(ENDPOINTS_URLS().posCart, item),
+  lookupSku: (sku: string) => get<any>(ENDPOINTS_URLS().posSkuLookup(sku)),
+  processPayment: (data: Record<string, unknown>) => post<any>(ENDPOINTS_URLS().posPayment, data),
 };
 
 // =============================================================
@@ -148,14 +149,14 @@ export interface CreateSalePayload {
 
 export const salesApi = {
   /** GET /api/sales/ — list all sales */
-  getAll: () => get<any[]>(ENDPOINTS_URLS.sales),
+  getAll: () => get<any[]>(ENDPOINTS_URLS().sales),
 
   /** GET /api/sales/:id/ — retrieve one sale with full details */
-  getById: (id: string | number) => get<any>(ENDPOINTS_URLS.saleById(id)),
+  getById: (id: string | number) => get<any>(ENDPOINTS_URLS().saleById(id)),
 
   /** POST /api/sales/ — create a new sale */
   create: (payload: CreateSalePayload) =>
-    post<any>(ENDPOINTS_URLS.sales, payload as unknown as Record<string, unknown>),
+    post<any>(ENDPOINTS_URLS().sales, payload as unknown as Record<string, unknown>),
 };
 
 
@@ -163,8 +164,8 @@ export const salesApi = {
 //  Auth API
 // =============================================================
 export const authApi = {
-  login: (data: Record<string, unknown>) => post<{ access: string, refresh: string }>(ENDPOINTS_URLS.authLogin, data),
-  refresh: (refresh: string) => post<{ access: string }>(ENDPOINTS_URLS.authRefresh, { refresh }),
-  verifyRole: () => get<{ username: string, role: string }>(ENDPOINTS_URLS.authVerifyRole),
+  login: (data: Record<string, unknown>) => post<{ access: string, refresh: string }>(ENDPOINTS_URLS().authLogin, data),
+  refresh: (refresh: string) => post<{ access: string }>(ENDPOINTS_URLS().authRefresh, { refresh }),
+  verifyRole: () => get<{ username: string, role: string }>(ENDPOINTS_URLS().authVerifyRole),
 };
 
