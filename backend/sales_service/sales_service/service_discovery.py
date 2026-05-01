@@ -4,7 +4,7 @@ import os
 
 load_dotenv()
 
-consulHost = os.environ.get("CONSUL_HOST")
+consulHost = os.environ.get("consulHost")
 
 def discover_service(service_name):
     c = consul.Consul(
