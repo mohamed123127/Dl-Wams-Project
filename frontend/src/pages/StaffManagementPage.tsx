@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Plus, ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react';
 import { staffApi } from '../services/api';
+import { STAFF_API_URL } from '../services/api';
 
 // --- Types ---
 interface StaffMember {
@@ -144,7 +145,7 @@ export const StaffManagementPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`http://127.0.0.1:8001/api/employees/${id}/`, {
+      await fetch(`${STAFF_API_URL}/api/employees/${id}/`, {
         method: 'DELETE',
       });
       await fetchStaff(); // Refresh from API

@@ -1,6 +1,9 @@
 import { Dashboard } from './pages/Dashboard';
 import { LoginPage } from './pages/LoginPage';
 import { useState } from 'react';
+import { fetchEndpoints } from './services/api';
+
+fetchEndpoints();
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

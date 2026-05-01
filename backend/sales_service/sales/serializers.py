@@ -1,10 +1,11 @@
 from PIL.Image import item
 from rest_framework import serializers
 import requests
+from sales_service.service_discovery import discover_service
 from .models import Sale, ItemSaled
 
-PRODUCT_SERVICE_URL = "http://127.0.0.1:8000/api/products"
-EMPLOYEE_SERVICE_URL = "http://127.0.0.1:8001/api/employees"
+PRODUCT_SERVICE_URL = f"{discover_service('product-service')}/api/products"
+EMPLOYEE_SERVICE_URL = f"{discover_service('employee-service')}/api/employees"
 
 class ItemSaledSerializer(serializers.ModelSerializer):
     class Meta:

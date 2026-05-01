@@ -1,12 +1,14 @@
 import requests
+from security_service.service_discovery import discover_service
 
-AUTH_SERVICE_URL = "http://127.0.0.1:8005/api/verify-role/"
+AUTH_SERVICE_URL = discover_service("auth-service")
 
 
 def verifyToken(token):
+    print("service",AUTH_SERVICE_URL)
     try:
         response = requests.get(
-            AUTH_SERVICE_URL,
+            f"{AUTH_SERVICE_URL}/api/verify-role/",
             headers={
                 "Authorization": token
             },

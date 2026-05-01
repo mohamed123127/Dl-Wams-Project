@@ -3,12 +3,10 @@ import { Sidebar } from '../components/Sidebar';
 import { IncidentDetailsSidebar } from '../components/IncidentDetailsSidebar';
 import { IncidentLogsPage } from './IncidentLogsPage';
 import { CameraGridPage } from './CameraGridPage';
-import { AnalyticsPage } from './AnalyticsPage';
-import { SettingsPage } from './SettingsPage';
 import { StaffManagementPage } from './StaffManagementPage';
 import { InventoryLogPage } from './InventoryLogPage'
 import { POSTerminalPage } from './POSTerminalPage'
-
+import { SECURITY_API_URL } from '../services/api';
 
 export type TabName = 'Camera Grid' | 'Incident Logs' | 'Analytics' | 'Staff Management' | 'Settings';
 export type CameraView = '2x2' | '3x3';
@@ -24,7 +22,7 @@ export const Dashboard = () => {
   // Fetch data in Dashboard so it persists across all tabs
   const fetchData = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8004/api/shoplifting/");
+      const res = await fetch(`${SECURITY_API_URL}/api/shoplifting/`);
       const data = await res.json();
       // API returns a plain array, not paginated
       const items = Array.isArray(data) ? data : data.results || [];
@@ -42,14 +40,14 @@ export const Dashboard = () => {
     fetchData(); // initial load
     const interval = setInterval(() => {
       fetchData();
-    }, 3000); // poll every 3 seconds
+    }, 300000); // poll every 3 seconds
     return () => clearInterval(interval);
   }, []);
 
   // Mark an item as viewed in DB and update local state immediately
   const markAsViewed = async (itemId: number) => {
     try {
-      await fetch(`http://127.0.0.1:8004/api/shoplifting/${itemId}/`, {
+      await fetch(`${SECURITY_API_URL}/api/shoplifting/${itemId}/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ viewed: true })
@@ -99,16 +97,12 @@ export const Dashboard = () => {
         );
       case 'Camera Grid':
         return <CameraGridPage />;
-      case 'Analytics':
-        return <AnalyticsPage />;
       case 'Inventory Log':
         return <InventoryLogPage />;
       case 'POS Terminal':
         return <POSTerminalPage />;
       case 'Staff Management':
         return <StaffManagementPage />;
-      case 'Settings':
-        return <SettingsPage />;
     }
   };
 

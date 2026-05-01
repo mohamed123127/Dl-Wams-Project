@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
+from auth_service.consul_register import register_service
 
 def main():
     """Run administrative tasks."""
@@ -19,4 +19,5 @@ def main():
 
 
 if __name__ == '__main__':
+    register_service()
     main()

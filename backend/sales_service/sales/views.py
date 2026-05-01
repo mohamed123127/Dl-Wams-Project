@@ -2,11 +2,12 @@ from sales_service.permissions import IsSeller
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 import requests
+from sales_service.service_discovery import discover_service
 from .models import Sale, ItemSaled
 from .serializers import SaleSerializer, ItemSaledSerializer
 
-PRODUCT_SERVICE_URL = "http://127.0.0.1:8000/api/products"
-EMPLOYEE_SERVICE_URL = "http://127.0.0.1:8001/api/employees"
+PRODUCT_SERVICE_URL = f"{discover_service('product-service')}/api/products"
+EMPLOYEE_SERVICE_URL = f"{discover_service('employee-service')}/api/employees"
 
 def get_employee_data(employee_id):
     try:

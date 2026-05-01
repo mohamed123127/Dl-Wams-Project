@@ -1,6 +1,7 @@
 
 import { Calendar, Video, Bookmark, Download, Play, SkipBack, SkipForward, Maximize } from 'lucide-react';
 import { useEffect, useState } from "react";
+import { MODEL_API_URL } from '../services/api';
 
 interface IncidentLogsPageProps {
   items: any[];
@@ -49,7 +50,7 @@ export const IncidentLogsPage = ({ testVedio, setTestVedio, items, selectedItemI
         formData.append("video", video);
 
         try {
-          const response = await fetch("http://localhost:8003/api/predict/", {
+          const response = await fetch(`${MODEL_API_URL}/api/predict/`, {
             method: "POST",
             body: formData,
             // If using auth:

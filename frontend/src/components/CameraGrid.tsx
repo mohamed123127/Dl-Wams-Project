@@ -2,11 +2,7 @@ import { CameraOff } from 'lucide-react';
 import type { CameraView } from '../frontend/Dashboard';
 import { useRef, useEffect, useState } from 'react';
 import { getHeaders } from '../services/api';
-
-
-// Using a free sample video to simulate "real feed when cameras are installed"
-// But built functionally so these can be replaced by RTSP/WebRTC streams easily.
-const SAMPLE_STREAM_URL = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4";
+import { SECURITY_API_URL } from '../services/api';
 
 interface BoundingBox {
   id: string;
@@ -102,7 +98,8 @@ export const CameraGrid = ({ view }: { view: CameraView }) => {
   const [cameras, setCameras] = useState<Camera[]>([]);
 
   useEffect(() => {
-    fetch('https://28aa-105-99-229-78.ngrok-free.app/api/cameras/'
+    console.log("security url", SECURITY_API_URL)
+    fetch(`https://${SECURITY_API_URL}/api/cameras/`
       , {
         method: 'GET',
         headers: getHeaders(),

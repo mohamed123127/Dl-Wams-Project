@@ -3,6 +3,8 @@ frontend:
     npm install
     npm run dev
 
+consul agent -dev
+
 backend:in new terminal
     cd backend
     pip install -r requirements.txt
@@ -35,3 +37,7 @@ auth_service:in new terminal
     cd backend/auth_service
     python manage.py migrate
     python manage.py runserver 8005
+
+gateway_service:in new terminal
+    cd backend/gateway
+    python manage.py runserver 8006
