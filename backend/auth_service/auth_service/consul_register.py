@@ -1,26 +1,32 @@
 import consul
 import atexit
+import os
+
+consulHost = os.getenv("consulHost")
+authHost = os.getenv("authHost")
 
 SERVICE_NAME = "auth-service"
 SERVICE_PORT = 8005
 
-def get_url():
-    return "62b0-154-244-53-158.ngrok-free.app"
 
 def register_service():
-    print(f"Service {SERVICE_NAME} is running at {get_url()}")
+    print(f"Service {SERVICE_NAME} is running at {authHost}")
 
-    c = consul.Consul(host="localhost", port=8500)
+    c = consul.Consul(
+        host=consulHost,
+        port=443,
+        scheme="https"
+    )
 
     service_id = f"{SERVICE_NAME}-1"
 
     c.agent.service.register(
         name=SERVICE_NAME,
         service_id=service_id,
-        address=get_url(),
+        address=authHost,
         port=SERVICE_PORT,
         check=consul.Check.http(
-            f"https://{get_url()}/health/",
+            f"https://{authHost}/health/",
             interval="10s"
         )
     )
@@ -28,7 +34,11 @@ def register_service():
     print(f"{SERVICE_NAME} registered successfully.")
 
 def deregister_service():
-    c = consul.Consul(host="localhost", port=8500)
+    c = consul.Consul(
+        host=consulHost,
+        port=443,
+        scheme="https"
+    )
     service_id = f"{SERVICE_NAME}-1"
     c.agent.service.deregister(service_id)
     print(f"{service_id} deregistered.")

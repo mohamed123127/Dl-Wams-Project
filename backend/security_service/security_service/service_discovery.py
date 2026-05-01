@@ -1,7 +1,14 @@
 import consul
+import os
+
+consulHost = os.getenv("consulHost")
 
 def discover_service(service_name):
-    c = consul.Consul(host="localhost", port=8500)
+    c = consul.Consul(
+        host=consulHost,
+        port=443,
+        scheme="https"
+    )
 
     services = c.health.service(service_name, passing=True)[1] #passing=True means healthy services only
 
