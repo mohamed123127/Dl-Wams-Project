@@ -3,8 +3,6 @@
 import os
 import sys
 from auth_service.consul_register import register_service
-from dotenv import load_dotenv
-
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'auth_service.settings')
@@ -20,7 +18,5 @@ def main():
 
 
 if __name__ == '__main__':
-    load_dotenv()
-    print(os.getenv("consulHost"))
     register_service()
     main()

@@ -1,7 +1,9 @@
 import consul
 import atexit
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 consulHost = os.getenv("consulHost")
 authHost = os.getenv("authHost")
 
@@ -10,7 +12,7 @@ SERVICE_PORT = 8005
 
 
 def register_service():
-    print(f"Service {SERVICE_NAME} is running at {authHost}")
+    print(f"Service {SERVICE_NAME} is running at {consulHost}")
 
     c = consul.Consul(
         host=consulHost,

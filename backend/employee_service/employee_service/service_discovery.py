@@ -1,6 +1,8 @@
 import consul
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 consulHost = os.getenv("consulHost")
 
 def discover_service(service_name):

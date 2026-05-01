@@ -1,4 +1,7 @@
 import consul
+from dotenv import load_dotenv
+load_dotenv()
+
 import os
 
 consulHost = os.getenv("consulHost")

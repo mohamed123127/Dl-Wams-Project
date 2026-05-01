@@ -1,7 +1,9 @@
 import consul
 import os
 import atexit
+from dotenv import load_dotenv
 
+load_dotenv()
 consulHost = os.getenv("consulHost")
 salesHost = os.getenv("salesHost")
 

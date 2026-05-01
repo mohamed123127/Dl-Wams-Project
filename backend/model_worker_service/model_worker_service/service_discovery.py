@@ -1,5 +1,7 @@
 import consul
+from dotenv import load_dotenv
 
+load_dotenv()
 def discover_service(service_name):
     c = consul.Consul(host="localhost", port=8500)
 

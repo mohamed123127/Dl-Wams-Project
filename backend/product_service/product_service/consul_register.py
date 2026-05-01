@@ -2,7 +2,9 @@ import consul
 import socket
 import atexit
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 consulHost = os.getenv("consulHost")
 productHost = os.getenv("productHost")
 
