@@ -28,11 +28,11 @@ export const Sidebar = ({ activeTab, onTabChange, onLogout, hasIncidentNotificat
   const navItems: { icon: React.ReactNode; label: TabName; hasNotification?: boolean }[] = [
     { icon: <LayoutGrid className="w-4 h-4" />, label: 'Camera Grid' },
     { icon: <AlertTriangle className="w-4 h-4" />, label: 'Incident Logs', hasNotification: hasIncidentNotification },
-    { icon: <BarChart2 className="w-4 h-4" />, label: 'Analytics' },
+    //{ icon: <BarChart2 className="w-4 h-4" />, label: 'Analytics' },
     { icon: <Users className="w-4 h-4" />, label: 'Staff Management' },
     { icon: <Users className="w-4 h-4" />, label: 'Inventory Log' },
     { icon: <Users className="w-4 h-4" />, label: 'POS Terminal' },
-    { icon: <Settings className="w-4 h-4" />, label: 'Settings' },
+    //{ icon: <Settings className="w-4 h-4" />, label: 'Settings' },
   ];
 
   return (

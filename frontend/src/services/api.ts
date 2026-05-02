@@ -1,9 +1,3 @@
-// =============================================================
-// Centralized API Service
-// =============================================================
-// All backend endpoint URLs are defined here in one place.
-// When the Django backend URLs are ready, update them below.
-// =============================================================
 
 const SERVICES_BASE_URL = 'http://localhost:8006';
 const SERVICES_URL = `${SERVICES_BASE_URL}/api/services`;
@@ -63,9 +57,6 @@ function ENDPOINTS_URLS() {
   };
 }
 
-// =============================================================
-//  Generic helpers
-// =============================================================
 
 export function getHeaders(): Record<string, string> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -105,27 +96,21 @@ async function patch<T>(url: string, body: Record<string, unknown>): Promise<T> 
   return res.json();
 }
 
-// =============================================================
-//  Inventory API
-// =============================================================
+
 export const inventoryApi = {
   getAll: () => get<any[]>(ENDPOINTS_URLS().inventory),
   create: (item: Record<string, unknown>) => post<any>(ENDPOINTS_URLS().inventory, item),
   update: (id: string, data: Record<string, unknown>) => patch<any>(ENDPOINTS_URLS().inventoryItem(id), data),
 };
 
-// =============================================================
-//  Staff API
-// =============================================================
+
 export const staffApi = {
   getAll: () => get<any[]>(ENDPOINTS_URLS().staff),
   create: (member: Record<string, unknown>) => post<any>(ENDPOINTS_URLS().staff, member),
   update: (id: string, data: Record<string, unknown>) => patch<any>(ENDPOINTS_URLS().staffMember(id), data),
 };
 
-// =============================================================
-//  POS Terminal API
-// =============================================================
+
 export const posApi = {
   getCart: () => get<any[]>(ENDPOINTS_URLS().posCart),
   addToCart: (item: Record<string, unknown>) => post<any>(ENDPOINTS_URLS().posCart, item),
@@ -133,9 +118,7 @@ export const posApi = {
   processPayment: (data: Record<string, unknown>) => post<any>(ENDPOINTS_URLS().posPayment, data),
 };
 
-// =============================================================
-//  Sales API  (Django sales_service — port 8002)
-// =============================================================
+
 export interface SaleItem {
   product_id: number;
   quantity: number;
@@ -160,9 +143,7 @@ export const salesApi = {
 };
 
 
-// =============================================================
-//  Auth API
-// =============================================================
+
 export const authApi = {
   login: (data: Record<string, unknown>) => post<{ access: string, refresh: string }>(ENDPOINTS_URLS().authLogin, data),
   refresh: (refresh: string) => post<{ access: string }>(ENDPOINTS_URLS().authRefresh, { refresh }),
