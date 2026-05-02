@@ -41,3 +41,5 @@ auth_service:in new terminal
 gateway_service:in new terminal
     cd backend/gateway
     python manage.py runserver 8006
+
+    pip install python-consul

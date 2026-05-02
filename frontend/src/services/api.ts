@@ -20,12 +20,12 @@ let ENDPOINTS: Record<string, string> = {};
 
 export async function fetchEndpoints() {
   ENDPOINTS = await getServicesUrls();
-  AUTH_API_URL = ENDPOINTS['auth-service'].status === "available" ? ENDPOINTS['auth-service'].url : "";
-  INVENTORY_API_URL = ENDPOINTS['product-service'].status === "available" ? ENDPOINTS['product-service'].url : "";
-  SALES_API_URL = ENDPOINTS['sales-service'].status === "available" ? ENDPOINTS['sales-service'].url : "";
-  STAFF_API_URL = ENDPOINTS['employee-service'].status === "available" ? ENDPOINTS['employee-service'].url : "";
-  MODEL_API_URL = ENDPOINTS['model-worker-service'].status === "available" ? ENDPOINTS['model-worker-service'].url : "";
-  SECURITY_API_URL = ENDPOINTS['security-service'].status === "available" ? ENDPOINTS['security-service'].url : "";
+  AUTH_API_URL = ENDPOINTS['auth-service'].status === "available" ? ENDPOINTS['auth-service'].url : "localhost:8005";
+  INVENTORY_API_URL = ENDPOINTS['product-service'].status === "available" ? ENDPOINTS['product-service'].url : "localhost:8000";
+  SALES_API_URL = ENDPOINTS['sales-service'].status === "available" ? ENDPOINTS['sales-service'].url : "localhost:8002";
+  STAFF_API_URL = ENDPOINTS['employee-service'].status === "available" ? ENDPOINTS['employee-service'].url : "localhost:8001";
+  MODEL_API_URL = ENDPOINTS['model-worker-service'].status === "available" ? ENDPOINTS['model-worker-service'].url : "localhost:8003";
+  SECURITY_API_URL = ENDPOINTS['security-service'].status === "available" ? ENDPOINTS['security-service'].url : "localhost:8004";
 }
 
 
